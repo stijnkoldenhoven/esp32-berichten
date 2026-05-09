@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32 Berichten</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; font-size: 16px; box-sizing: border-box; }
+    button { background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    #status { margin-top: 12px; color: green; }
+  </style>
+</head>
+<body>
+  <h2>📟 Stuur een bericht naar de ESP32</h2>
+  <input type="text" id="bericht" placeholder="Typ je bericht hier..." maxlength="50">
+  <button onclick="stuurBericht()">Verstuur</button>
+  <div id="status"></div>
+
+  <script>
+    const AIO_USERNAME = "Stijnka";
+    const AIO_KEY      = "aio_hKDK817Y0lTIgbw0O2T20RtauJsD";
+
+    async function stuurBericht() {
+      const bericht = document.getElementById("bericht").value;
+      if (!bericht) return;
+
+      const url = `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/berichten/data`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "X-AIO-Key": AIO_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ value: bericht })
+      });
+
+      if (response.ok) {
+        document.getElementById("status").textContent = "✅ Bericht verzonden!";
+        document.getElementById("bericht").value = "";
+      } else {
+        document.getElementById("status").textContent = "❌ Er ging iets mis.";
+      }
+    }
+  </script>
+</body>
+</html>
